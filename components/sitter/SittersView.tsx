@@ -65,15 +65,17 @@ export default function SittersView({ sitters, searchParams, totalCount }: Sitte
 
       {/* 検索結果 */}
       <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
-        <p className="text-sm text-gray-500 mb-6">
-          {totalCount > 0 ? `${totalCount}件のシッターが見つかりました` : '条件に合うシッターが見つかりませんでした'}
-        </p>
+        {totalCount > 0 && (
+          <p className="text-sm text-gray-500 mb-6">{totalCount}件のシッターが見つかりました</p>
+        )}
 
         {totalCount === 0 ? (
           <div className="text-center py-16">
-            <Search className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-            <p className="text-gray-500 text-lg">条件に合うシッターが見つかりませんでした</p>
-            <p className="text-gray-400 text-sm mt-2">検索条件を変えて試してみてください</p>
+            <div className="w-20 h-20 bg-primary-50 rounded-full flex items-center justify-center mx-auto mb-5">
+              <Search className="w-9 h-9 text-primary-400" />
+            </div>
+            <p className="text-gray-900 text-xl font-bold mb-2">シッターを探してみましょう！</p>
+            <p className="text-gray-500 text-sm">あなたのペットにぴったりのシッターがきっと見つかります</p>
           </div>
         ) : viewMode === 'list' ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
