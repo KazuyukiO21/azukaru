@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>アズカル プロダクトロードマップ</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Hiragino Sans', 'Noto Sans JP', sans-serif; background: #faf9f7; color: #1a1a1a; }
+  .header { background: #f04e1a; color: white; padding: 40px 48px; }
+  .header h1 { font-size: 28px; font-weight: 800; }
+  .header p { margin-top: 8px; opacity: 0.85; font-size: 15px; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 48px 24px; }
+
+  /* 現在の進捗 */
+  .status-section { margin-bottom: 56px; }
+  .section-title { font-size: 20px; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap-10px; }
+  .status-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+  .status-card { background: white; border-radius: 14px; padding: 16px; border: 1.5px solid #e5e7eb; }
+  .status-card.done { border-color: #bbf7d0; background: #f0fdf4; }
+  .status-card.partial { border-color: #fed7aa; background: #fff7ed; }
+  .status-card.todo { border-color: #e5e7eb; background: white; }
+  .status-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 99px; margin-bottom: 8px; }
+  .badge-done { background: #dcfce7; color: #166534; }
+  .badge-partial { background: #ffedd5; color: #9a3412; }
+  .badge-todo { background: #f3f4f6; color: #6b7280; }
+  .status-card h3 { font-size: 13px; font-weight: 600; color: #111; }
+  .status-card p { font-size: 11px; color: #6b7280; margin-top: 4px; line-height: 1.5; }
+
+  /* フェーズ */
+  .phases { display: flex; flex-direction: column; gap: 40px; }
+  .phase { background: white; border-radius: 20px; border: 1.5px solid #e5e7eb; overflow: hidden; }
+  .phase-header { padding: 24px 28px; display: flex; align-items: center; gap: 16px; }
+  .phase-badge { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; shrink: 0; }
+  .phase-1 .phase-badge { background: #fff1ee; }
+  .phase-2 .phase-badge { background: #eff6ff; }
+  .phase-3 .phase-badge { background: #f0fdf4; }
+  .phase-4 .phase-badge { background: #faf5ff; }
+  .phase-meta h2 { font-size: 17px; font-weight: 700; }
+  .phase-meta .timeline { font-size: 12px; color: #f04e1a; font-weight: 600; margin-top: 2px; }
+  .phase-meta .desc { font-size: 13px; color: #6b7280; margin-top: 2px; }
+  .phase-body { padding: 0 28px 28px; }
+  .items-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
+  .item { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; border-radius: 12px; border: 1px solid #f0f0f0; }
+  .item-icon { font-size: 20px; flex-shrink: 0; width: 32px; text-align: center; }
+  .item-body h4 { font-size: 13px; font-weight: 600; color: #111; }
+  .item-body p { font-size: 11px; color: #9ca3af; margin-top: 2px; line-height: 1.5; }
+  .item-priority { font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 99px; margin-top: 5px; display: inline-block; }
+  .priority-high { background: #fee2e2; color: #b91c1c; }
+  .priority-mid { background: #fef3c7; color: #92400e; }
+  .priority-low { background: #f3f4f6; color: #6b7280; }
+
+  .phase-1 .item { background: #fff8f6; }
+  .phase-2 .item { background: #f8faff; }
+  .phase-3 .item { background: #f6fdf8; }
+  .phase-4 .item { background: #fdf8ff; }
+
+  .divider { border: none; border-top: 1px solid #f0f0f0; margin: 0 28px 20px; }
+
+  /* KPI */
+  .kpi-section { background: white; border-radius: 20px; border: 1.5px solid #e5e7eb; padding: 28px; margin-bottom: 40px; }
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; margin-top: 20px; }
+  .kpi-card { text-align: center; padding: 20px 16px; background: #faf9f7; border-radius: 14px; }
+  .kpi-card .num { font-size: 28px; font-weight: 800; color: #f04e1a; }
+  .kpi-card .label { font-size: 12px; color: #6b7280; margin-top: 4px; }
+  .kpi-card .period { font-size: 10px; color: #d1d5db; margin-top: 2px; }
+
+  .tag { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; padding: 2px 8px; border-radius: 99px; }
+  .tag-feature { background: #ede9fe; color: #5b21b6; }
+  .tag-infra { background: #e0f2fe; color: #0369a1; }
+  .tag-growth { background: #dcfce7; color: #166534; }
+  .tag-trust { background: #fff7ed; color: #9a3412; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🐾 アズカル プロダクトロードマップ</h1>
+  <p>ペットシッターマッチングサービス — 開発計画 2026年版</p>
+</div>
+
+<div class="container">
+
+  <!-- 現在の実装状況 -->
+  <div class="status-section">
+    <div class="section-title" style="margin-bottom:16px; font-size:18px; font-weight:700;">📊 現在の実装状況</div>
+    <div class="status-grid">
+      <div class="status-card done">
+        <span class="status-badge badge-done">✅ 完成</span>
+        <h3>ランディングページ</h3>
+        <p>LP、利用規約対応、CTA</p>
+      </div>
+      <div class="status-card done">
+        <span class="status-badge badge-done">✅ 完成</span>
+        <h3>認証・ログイン</h3>
+        <p>メール登録・ログイン、セッション管理</p>
+      </div>
+      <div class="status-card done">
+        <span class="status-badge badge-done">✅ 完成</span>
+        <h3>ユーザーダッシュボード</h3>
+        <p>予約・メッセージ・プロフィール導線</p>
+      </div>
+      <div class="status-card done">
+        <span class="status-badge badge-done">✅ 完成</span>
+        <h3>シッタープロフィール</h3>
+        <p>サービス・料金・環境設定</p>
+      </div>
+      <div class="status-card done">
+        <span class="status-badge badge-done">✅ 完成</span>
+        <h3>シッター検索・一覧</h3>
+        <p>都道府県・サービス絞り込み</p>
+      </div>
+      <div class="status-card done">
+        <span class="status-badge badge-done">✅ 完成</span>
+        <h3>管理画面</h3>
+        <p>ユーザー・シッター・予約・レビュー管理</p>
+      </div>
+      <div class="status-card done">
+        <span class="status-badge badge-done">✅ 完成</span>
+        <h3>セキュリティ対策</h3>
+        <p>CSP・HSTS・RLS・入力検証</p>
+      </div>
+      <div class="status-card partial">
+        <span class="status-badge badge-partial">⚠️ 未完成</span>
+        <h3>予約フロー</h3>
+        <p>APIはあるがUI・決済が未接続</p>
+      </div>
+      <div class="status-card partial">
+        <span class="status-badge badge-partial">⚠️ 未完成</span>
+        <h3>メッセージ機能</h3>
+        <p>DBスキーマはあるがリアルタイムUIなし</p>
+      </div>
+      <div class="status-card partial">
+        <span class="status-badge badge-partial">⚠️ 未完成</span>
+        <h3>ソーシャルログイン</h3>
+        <p>ボタンUIはあるが認証未接続</p>
+      </div>
+      <div class="status-card todo">
+        <span class="status-badge badge-todo">🔲 未着手</span>
+        <h3>決済（Stripe）</h3>
+        <p>Stripe Connect・支払いフロー</p>
+      </div>
+      <div class="status-card todo">
+        <span class="status-badge badge-todo">🔲 未着手</span>
+        <h3>本人確認・資格証明</h3>
+        <p>身分証アップロード・審査フロー</p>
+      </div>
+      <div class="status-card todo">
+        <span class="status-badge badge-todo">🔲 未着手</span>
+        <h3>プロフィール写真</h3>
+        <p>画像アップロード・ストレージ</p>
+      </div>
+      <div class="status-card todo">
+        <span class="status-badge badge-todo">🔲 未着手</span>
+        <h3>メール通知</h3>
+        <p>予約・メッセージ通知メール</p>
+      </div>
+      <div class="status-card todo">
+        <span class="status-badge badge-todo">🔲 未着手</span>
+        <h3>パスワードリセット</h3>
+        <p>/forgot-passwordページ</p>
+      </div>
+      <div class="status-card todo">
+        <span class="status-badge badge-todo">🔲 未着手</span>
+        <h3>利用規約ページ</h3>
+        <p>/termsページ（リンクは存在）</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 目標KPI -->
+  <div class="kpi-section">
+    <div style="font-size:18px; font-weight:700; margin-bottom:4px;">🎯 目標KPI</div>
+    <div style="font-size:13px; color:#6b7280;">プロダクト開発の各フェーズで目指す数字</div>
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="num">50</div>
+        <div class="label">登録シッター数</div>
+        <div class="period">Phase 1 完了時</div>
+      </div>
+      <div class="kpi-card">
+        <div class="num">200</div>
+        <div class="label">登録ユーザー数</div>
+        <div class="period">Phase 1 完了時</div>
+      </div>
+      <div class="kpi-card">
+        <div class="num">30</div>
+        <div class="label">月間予約成立数</div>
+        <div class="period">Phase 2 完了時</div>
+      </div>
+      <div class="kpi-card">
+        <div class="num">4.5★</div>
+        <div class="label">平均シッター評価</div>
+        <div class="period">継続目標</div>
+      </div>
+      <div class="kpi-card">
+        <div class="num">15%</div>
+        <div class="label">プラットフォーム手数料</div>
+        <div class="period">現在の設定</div>
+      </div>
+      <div class="kpi-card">
+        <div class="num">¥500K</div>
+        <div class="label">月間 GMV 目標</div>
+        <div class="period">Phase 3 完了時</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- フェーズ -->
+  <div class="phases">
+
+    <!-- Phase 1 -->
+    <div class="phase phase-1">
+      <div class="phase-header">
+        <div class="phase-badge">🚀</div>
+        <div class="phase-meta">
+          <h2>Phase 1 — MVPの完成</h2>
+          <div class="timeline">今すぐ〜1ヶ月以内</div>
+          <div class="desc">実際に「予約して・支払う」ができる状態にする</div>
+        </div>
+      </div>
+      <hr class="divider">
+      <div class="phase-body">
+        <div class="items-grid">
+          <div class="item">
+            <div class="item-icon">📸</div>
+            <div class="item-body">
+              <h4>プロフィール写真アップロード</h4>
+              <p>Supabase Storage連携。シッター・飼い主どちらも設定可能</p>
+              <span class="item-priority priority-high">最優先</span>
+            </div>
+          </div>
+          <div class="item">
+            <div class="item-icon">🪪</div>
+            <div class="item-body">
+              <h4>本人確認フロー</h4>
+              <p>身分証アップロード→管理者審査→承認/否認のフロー</p>
+              <span class="item-priority priority-high">最優先</span>
+            </div>
+          </div>
+          <div class="item">
+            <div class="item-icon">🏅</div>
+            <div class="item-body">
+              <h4>シッター資格・証明証管理</h4>
+              <p>ペットシッター士、動物看護師など資格証アップロード</p>
+              <span class="item-priority priority-high">最優先</span>
+            </div>
+          </div>
+          <div class="item">
+            <div class="item-icon">📅</div>
+            <div class="item-body">
+              <h4>予約フロー UI 完成</h4>
+              <p>シッター詳細→日程選択→確認→依頼送信の一連の流れ</p>
+              <span class="item-priority priority-high">最優先</span>
+            </div>
+          </div>
+          <div class="item">
+            <div class="item-icon">💬</div>
+            <div class="item-body">
+              <h4>メッセージ機能 UI</h4>
+              <p>リアルタイムチャット。予約前の相談・調整に使う</p>
+              <span class="item-priority priority-high">最優先</span>
+            </div>
+          </div>
+          <div class="item">
+            <div class="item-icon">💳</div>
+            <div class="item-body">
+              <h4>Stripe 決済統合</h4>
+              <p>クレカ支払い・Stripe Connect でシッターへ自動送金</p>
+              <span class="item-priority priority-high">最優先</span>
+            </div>
+          </div>
+          <div class="item">
+            <div class="item-icon">🔑</div>
+            <div class="item-body">
+              <h4>パスワードリセット</h4>
+              <p>/forgot-password ページ。メールでリセットリンク送信</p>
+              <span class="item-priority priority-mid">重要</span>
+            </div>
+          </div>
+          <div class="item">
+            <div class="item-icon">📄</div>
+            <div class="item-body">
+              <h4>利用規約ページ</h4>
+              <p>/terms ページ（登録フォームから既にリンク済み）</p>
+              <span class="item-priority priority-mid">重要</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 2 -->
+    <div class="phase phase-2">
+      <div class="phase-header">
+        <div class="phase-badge">🛡️</div>
+        <div class="phase-meta">
+          <h2>Phase 2 — 信頼性・UX向上</h2>
+          <div class="timeline">1〜2ヶ月</div>
+          <div class="desc">ユーザーが安心して使い続けられる仕組みを作る</div>
+        </div>
+      </div>
+      <hr class="divider">
+      <div class="phase-body">
+        <div class="items-grid">
+          <div class="item">
+            <div class="item-icon">⭐</div>
+            <div class="item-body">
+              <h4>レビュー投稿 UI</h4>
+              <p>予約完了後のレビュー記入フォーム、シッターページへの表示</p>
+              <span class="item-priority priority-high">最優先</span>
+            </div>
+          </div>
+          <div class="item">
+            <div class="item-icon">📧</div>
+            <div class="item-body">
+              <h4>メール通知</h4>
+              <p>予約依頼・承認・キャンセル・メッセージ受信をメール通知</p>
+              <span class="item-priority priority-high">最優先</span>
+            </div>
+          </div>
+          <div class="item">
+            <div class="item-icon">🔐</div>
+            <div class="item-body">
+              <h4>ソーシャルログイン</h4>
+              <p>Google / LINE ログイン。登録率の大幅改善が見込める</p>
+              <span class="item-priority priority-high">最優先</span>
+            </div>
+          </div>
+          <div class="item">
+            <div class="item-icon">🐶</div>
+            <div class="item-body">
+              <h4>ペット情報登録</h4>
+              <p>飼い主が犬種・年齢・ワクチン情報を登録。予約時に自動入力</p>
+              <span class="item-priority priority-mid">重要</span>
+            </div>
+          </div>
+          <div class="item">
+            <div class="item-icon">🗓️</div>
+            <div class="item-body">
+              <h4>シッターの空き日程管理</h4>
+              <p>カレンダーで受付可能日を設定。飼い主から見える</p>
+              <span class="item-priority priority-mid">重要</span>
+            </div>
+          </div>
+          <div class="item">
+            <div class="item-icon">🖼️</div>
+            <div class="item-body">
+              <h4>シッターギャラリー</h4>
+              <p>シッターが自宅・ペットの写真を複数枚アップロード</p>
+              <span class="item-priority priority-mid">重要</span>
+            </div>
+          </div>
+          <div class="item">
+            <div class="item-icon">🔔</div>
+            <div class="item-body">
+              <h4>アプリ内通知</h4>
+              <p>ダッシュボードのベルアイコンに未読通知をリアルタイム表示</p>
+              <span class="item-priority priority-low">あると良い</span>
+            </div>
+          </div>
+          <div class="item">
+            <div class="item-icon">❓</div>
+            <div class="item-body">
+              <h4>FAQ ページ</h4>
+              <p>よくある質問。サポート問い合わせを減らす効果</p>
+              <span class="item-priority priority-low">あると良い</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 3 -->
+    <div class="phase phase-3">
+      <div class="phase-header">
+        <div class="phase-badge">📈</div>
+        <div class="phase-meta">
+          <h2>Phase 3 — 成長・集客</h2>
+          <div class="timeline">2〜4ヶ月</div>
+          <div class="desc">新規ユーザー獲得とリピート利用を増やす</div>
+        </div>
+      </div>
+      <hr class="divider">
+      <div class="phase-body">
+        <div class="items-grid">
+          <div class="item">
+            <div class="item-icon">🔍</div>
+            <div class="item-body">
+              <h4>SEO 最適化</h4>
+              <p>「[地名] ペットシッター」で検索上位を狙う。構造化データ対応</p>
+              <span class="item-priority priority-high">最優先</span>
+            </div>
+          </div>
+          <div class="item">
+            <div class="item-icon">📍</div>
+            <div class="item-body">
+              <h4>地域別シッターページ</h4>
+              <p>「東京 ペットシッター」など地域ページをSEO用に生成</p>
+              <span class="item-priority priority-high">最優先</span>
+            </div>
+          </div>
+          <div class="item">
+            <div class="item-icon">🎁</div>
+            <div class="item-body">
+              <h4>紹介プログラム</h4>
+              <p>友達紹介で初回割引。口コミによるバイラル成長</p>
+              <span class="item-priority priority-mid">重要</span>
+            </div>
+          </div>
+          <div class="item">
+            <div class="item-icon">📱</div>
+            <div class="item-body">
+              <h4>PWA 対応</h4>
+              <p>スマホのホーム画面に追加。ネイティブアプリ感でUX向上</p>
+              <span class="item-priority priority-mid">重要</span>
+            </div>
+          </div>
+          <div class="item">
+            <div class="item-icon">🤖</div>
+            <div class="item-body">
+              <h4>シッターマッチング提案</h4>
+              <p>ペットの特性・場所・日程からAIが最適シッターをレコメンド</p>
+              <span class="item-priority priority-mid">重要</span>
+            </div>
+          </div>
+          <div class="item">
+            <div class="item-icon">🛡️</div>
+            <div class="item-body">
+              <h4>ペット保険・補償の案内</h4>
+              <p>利用中のトラブル対応ポリシー整備。信頼性向上に直結</p>
+              <span class="item-priority priority-mid">重要</span>
+            </div>
+          </div>
+          <div class="item">
+            <div class="item-icon">📊</div>
+            <div class="item-body">
+              <h4>シッター向け収益ダッシュボード</h4>
+              <p>月次収益・予約数・評価推移のグラフ表示</p>
+              <span class="item-priority priority-low">あると良い</span>
+            </div>
+          </div>
+          <div class="item">
+            <div class="item-icon">💌</div>
+            <div class="item-body">
+              <h4>メルマガ・リマインド</h4>
+              <p>お気に入りシッターの空き通知、季節のキャンペーン告知</p>
+              <span class="item-priority priority-low">あると良い</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phase 4 -->
+    <div class="phase phase-4">
+      <div class="phase-header">
+        <div class="phase-badge">🌏</div>
+        <div class="phase-meta">
+          <h2>Phase 4 — スケールアップ</h2>
+          <div class="timeline">4ヶ月以降</div>
+          <div class="desc">ビジネスとして拡大する</div>
+        </div>
+      </div>
+      <hr class="divider">
+      <div class="phase-body">
+        <div class="items-grid">
+          <div class="item">
+            <div class="item-icon">📲</div>
+            <div class="item-body">
+              <h4>ネイティブアプリ（iOS/Android）</h4>
+              <p>React Native / Expo を使ったアプリ。プッシュ通知対応</p>
+              <span class="item-priority priority-mid">重要</span>
+            </div>
+          </div>
+          <div class="item">
+            <div class="item-icon">💰</div>
+            <div class="item-body">
+              <h4>シッター向けサブスクプラン</h4>
+              <p>月額プランで露出アップ・優先表示など有料特典</p>
+              <span class="item-priority priority-mid">重要</span>
+            </div>
+          </div>
+          <div class="item">
+            <div class="item-icon">🏢</div>
+            <div class="item-body">
+              <h4>法人・ホテル向けプラン</h4>
+              <p>ペットホテル・動物病院との提携。BtoB展開</p>
+              <span class="item-priority priority-low">あると良い</span>
+            </div>
+          </div>
+          <div class="item">
+            <div class="item-icon">🌐</div>
+            <div class="item-body">
+              <h4>多言語対応</h4>
+              <p>英語・中国語対応。訪日外国人ペット同行者をターゲット</p>
+              <span class="item-priority priority-low">あると良い</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- フッター -->
+  <div style="margin-top:48px; padding:24px; background:white; border-radius:16px; border:1.5px solid #e5e7eb; text-align:center;">
+    <p style="font-size:13px; color:#6b7280;">🐾 アズカル — ペットシッターマッチングサービス</p>
+    <p style="font-size:12px; color:#d1d5db; margin-top:4px;">このロードマップは状況に応じて随時更新してください</p>
+  </div>
+
+</div>
+</body>
+</html>
