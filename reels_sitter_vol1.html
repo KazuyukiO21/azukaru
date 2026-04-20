@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>アズカル Reels - シッター向け Vol.1</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #ede8e0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: 'Noto Sans JP', 'Hiragino Sans', sans-serif;
+  }
+
+  /* 9:16 Reels比率 */
+  .screen {
+    width: 390px;
+    height: 693px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 20px;
+    background: #fdfaf5;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.18);
+  }
+
+  /* プログレスバー */
+  .progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: rgba(207,122,47,0.15);
+    z-index: 10;
+  }
+  .progress-fill {
+    height: 100%;
+    background: #cf7a2f;
+    border-radius: 0 2px 2px 0;
+    animation: progress 30s linear forwards;
+    transform-origin: left;
+    transform: scaleX(0);
+  }
+  @keyframes progress {
+    0% { transform: scaleX(0); }
+    100% { transform: scaleX(1); }
+  }
+
+  /* シーン共通 */
+  .scene {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 48px 32px;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* ========== シーン1: フック 0〜5s ========== */
+  #scene1 {
+    background: #fdfaf5;
+    animation: s1 30s forwards;
+  }
+  @keyframes s1 {
+    0%   { opacity: 0; }
+    2%   { opacity: 1; }
+    16%  { opacity: 1; }
+    19%  { opacity: 0; }
+    100% { opacity: 0; }
+  }
+
+  .hook-paw {
+    font-size: 64px;
+    opacity: 0;
+    animation: popIn 0.6s 0.4s ease forwards;
+    margin-bottom: 24px;
+    filter: drop-shadow(0 4px 12px rgba(207,122,47,0.2));
+  }
+  .hook-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 28px 28px;
+    box-shadow: 0 4px 24px rgba(207,122,47,0.12), 0 1px 4px rgba(0,0,0,0.06);
+    text-align: center;
+    opacity: 0;
+    animation: slideUp 0.7s 0.9s ease forwards;
+    width: 100%;
+  }
+  .hook-sub {
+    font-size: 13px;
+    color: #cf7a2f;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+  }
+  .hook-main {
+    font-size: 26px;
+    font-weight: 900;
+    color: #1a1008;
+    line-height: 1.45;
+  }
+  .hook-main em {
+    color: #cf7a2f;
+    font-style: normal;
+  }
+
+  /* ========== シーン2: ベネフィット 5〜15s ========== */
+  #scene2 {
+    background: #fdfaf5;
+    animation: s2 30s forwards;
+  }
+  @keyframes s2 {
+    0%   { opacity: 0; }
+    19%  { opacity: 0; }
+    21%  { opacity: 1; }
+    50%  { opacity: 1; }
+    53%  { opacity: 0; }
+    100% { opacity: 0; }
+  }
+
+  .s2-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: #cf7a2f;
+    letter-spacing: 0.1em;
+    margin-bottom: 10px;
+    opacity: 0;
+    animation: fadeIn 0.5s 6.5s forwards;
+  }
+  .s2-title {
+    font-size: 22px;
+    font-weight: 900;
+    color: #1a1008;
+    text-align: center;
+    line-height: 1.5;
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: slideUp 0.6s 7s ease forwards;
+  }
+  .merit-list {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .merit-item {
+    background: #fff;
+    border-radius: 14px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border-left: 3px solid #cf7a2f;
+    opacity: 0;
+    transform: translateX(-16px);
+  }
+  .merit-item:nth-child(1) { animation: slideRight 0.45s 7.6s ease forwards; }
+  .merit-item:nth-child(2) { animation: slideRight 0.45s 8.2s ease forwards; }
+  .merit-item:nth-child(3) { animation: slideRight 0.45s 8.8s ease forwards; }
+  .merit-item:nth-child(4) { animation: slideRight 0.45s 9.4s ease forwards; }
+
+  .merit-icon { font-size: 22px; flex-shrink: 0; }
+  .merit-text { flex: 1; }
+  .merit-text strong {
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    color: #1a1008;
+    line-height: 1.3;
+  }
+  .merit-text span {
+    font-size: 11px;
+    color: #a86135;
+  }
+
+  /* ========== シーン3: CTA 15〜22s ========== */
+  #scene3 {
+    background: #cf7a2f;
+    animation: s3 30s forwards;
+  }
+  @keyframes s3 {
+    0%   { opacity: 0; }
+    53%  { opacity: 0; }
+    55%  { opacity: 1; }
+    76%  { opacity: 1; }
+    79%  { opacity: 0; }
+    100% { opacity: 0; }
+  }
+
+  .cta-logo-wrap {
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: popIn 0.6s 16.5s ease forwards;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .cta-logo {
+    font-size: 38px;
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: -0.01em;
+  }
+  .cta-logo-sub {
+    font-size: 11px;
+    color: rgba(255,255,255,0.7);
+    letter-spacing: 0.12em;
+    font-weight: 700;
+  }
+
+  .cta-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 28px 24px;
+    text-align: center;
+    width: 100%;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+    opacity: 0;
+    animation: slideUp 0.65s 17s ease forwards;
+  }
+  .cta-copy {
+    font-size: 21px;
+    font-weight: 900;
+    color: #1a1008;
+    line-height: 1.5;
+    margin-bottom: 8px;
+  }
+  .cta-copy em {
+    color: #cf7a2f;
+    font-style: normal;
+  }
+  .cta-hint {
+    font-size: 13px;
+    color: #a86135;
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+  .cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #cf7a2f;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 900;
+    padding: 14px 28px;
+    border-radius: 50px;
+    letter-spacing: 0.03em;
+    box-shadow: 0 4px 16px rgba(207,122,47,0.4);
+  }
+  .cta-arrow {
+    font-size: 20px;
+    opacity: 0;
+    animation: bounce 1s 18s infinite;
+    margin-top: 16px;
+  }
+
+  /* ========== シーン4: エンド 22〜30s ========== */
+  #scene4 {
+    background: #fdfaf5;
+    animation: s4 30s forwards;
+  }
+  @keyframes s4 {
+    0%   { opacity: 0; }
+    79%  { opacity: 0; }
+    81%  { opacity: 1; }
+    100% { opacity: 1; }
+  }
+
+  .end-paw {
+    font-size: 48px;
+    opacity: 0;
+    animation: popIn 0.6s 24s ease forwards;
+    margin-bottom: 16px;
+  }
+  .end-logo {
+    font-size: 44px;
+    font-weight: 900;
+    color: #cf7a2f;
+    opacity: 0;
+    animation: fadeIn 0.6s 24.5s forwards;
+    margin-bottom: 6px;
+  }
+  .end-tagline {
+    font-size: 13px;
+    color: #a86135;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    opacity: 0;
+    animation: fadeIn 0.5s 25s forwards;
+    margin-bottom: 32px;
+  }
+  .end-msg {
+    font-size: 15px;
+    color: #1a1008;
+    font-weight: 700;
+    text-align: center;
+    line-height: 1.7;
+    opacity: 0;
+    animation: slideUp 0.6s 25.5s ease forwards;
+  }
+  .end-msg em {
+    color: #cf7a2f;
+    font-style: normal;
+  }
+
+  /* ========== 装飾：肉球ドット ========== */
+  .deco {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(207,122,47,0.06);
+    pointer-events: none;
+  }
+  .d1 { width: 160px; height: 160px; top: -40px; right: -40px; }
+  .d2 { width: 100px; height: 100px; bottom: 40px; left: -30px; }
+  .d3 { width: 60px; height: 60px; bottom: 120px; right: 20px; }
+
+  /* ========== 共通アニメーション ========== */
+  @keyframes popIn {
+    0%   { opacity: 0; transform: scale(0.5); }
+    70%  { transform: scale(1.08); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+  @keyframes slideUp {
+    0%   { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes slideRight {
+    0%   { opacity: 0; transform: translateX(-16px); }
+    100% { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes fadeIn {
+    0%   { opacity: 0; }
+    100% { opacity: 1; }
+  }
+  @keyframes bounce {
+    0%, 100% { opacity: 0.7; transform: translateY(0); }
+    50%       { opacity: 1;   transform: translateY(-6px); }
+  }
+
+  /* リスタートボタン */
+  .restart-btn {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    background: rgba(207,122,47,0.12);
+    border: 1.5px solid rgba(207,122,47,0.25);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+    cursor: pointer;
+    color: #cf7a2f;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+    transition: background 0.2s;
+  }
+  .restart-btn:hover { background: rgba(207,122,47,0.22); }
+
+  .guide {
+    color: #a08060;
+    font-size: 12px;
+    text-align: center;
+    margin-top: 14px;
+    font-family: 'Noto Sans JP', sans-serif;
+    letter-spacing: 0.04em;
+  }
+</style>
+</head>
+<body>
+
+<div style="display:flex; flex-direction:column; align-items:center;">
+  <div class="screen" id="mainScreen">
+
+    <!-- プログレスバー -->
+    <div class="progress">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <!-- 装飾 -->
+    <div class="deco d1"></div>
+    <div class="deco d2"></div>
+    <div class="deco d3"></div>
+
+    <!-- シーン1: フック -->
+    <div class="scene" id="scene1">
+      <div class="hook-paw">🐾</div>
+      <div class="hook-card">
+        <div class="hook-sub">ペット好きな方へ</div>
+        <div class="hook-main">
+          ペットと過ごすだけで<br>
+          <em>お金になるって</em><br>
+          知ってた？
+        </div>
+      </div>
+    </div>
+
+    <!-- シーン2: メリット -->
+    <div class="scene" id="scene2">
+      <div class="s2-label">FOR SITTERS</div>
+      <div class="s2-title">アズカルのシッターなら<br>こんな働き方ができる</div>
+      <div class="merit-list">
+        <div class="merit-item">
+          <span class="merit-icon">🛋️</span>
+          <div class="merit-text">
+            <strong>完全自宅でOK</strong>
+            <span>自分のペースで受け入れ</span>
+          </div>
+        </div>
+        <div class="merit-item">
+          <span class="merit-icon">🐾</span>
+          <div class="merit-text">
+            <strong>資格・経験は不要</strong>
+            <span>ペットが好きならすぐ始められる</span>
+          </div>
+        </div>
+        <div class="merit-item">
+          <span class="merit-icon">🤝</span>
+          <div class="merit-text">
+            <strong>飼い主は全員身元確認済み</strong>
+            <span>安心して受け入れられる環境</span>
+          </div>
+        </div>
+        <div class="merit-item">
+          <span class="merit-icon">📲</span>
+          <div class="merit-text">
+            <strong>予約・決済はアプリで完結</strong>
+            <span>現金やりとり・面倒な手続き不要</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- シーン3: CTA（オレンジ背景） -->
+    <div class="scene" id="scene3">
+      <div class="cta-logo-wrap">
+        <div class="cta-logo">アズカル</div>
+        <div class="cta-logo-sub">ペットシッター マーケットプレイス</div>
+      </div>
+      <div class="cta-card">
+        <div class="cta-copy">
+          今なら<em>先行登録無料！</em>
+        </div>
+        <div class="cta-hint">
+          プロフィールのリンクから<br>シッター登録してね 🐶
+        </div>
+        <div class="cta-btn">
+          👉 シッター登録はこちら
+        </div>
+      </div>
+      <div class="cta-arrow">☝️</div>
+    </div>
+
+    <!-- シーン4: エンド -->
+    <div class="scene" id="scene4">
+      <div class="end-paw">🐾</div>
+      <div class="end-logo">アズカル</div>
+      <div class="end-tagline">AZUKARU — Pet Sitter Marketplace</div>
+      <div class="end-msg">
+        大切なペットを、<em>信頼できる人へ。</em><br>
+        <br>
+        シッター登録は<br>プロフィールリンクから ↑
+      </div>
+    </div>
+
+    <!-- リスタートボタン -->
+    <button class="restart-btn" onclick="restartAnim()" title="最初から再生">↺</button>
+
+  </div>
+
+  <p class="guide">↺ で再生 ／ スクリーン録画 → BGM追加 → Instagram投稿</p>
+</div>
+
+<script>
+function restartAnim() {
+  const screen = document.getElementById('mainScreen');
+  screen.style.display = 'none';
+  setTimeout(() => { screen.style.display = 'block'; }, 30);
+}
+</script>
+
+</body>
+</html>
